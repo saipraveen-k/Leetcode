@@ -1,0 +1,39 @@
+class Solution(object):
+    def solveSudoku(self, board):
+        rows = [set() for _ in range(9)]
+        cols = [set() for _ in range(9)]
+        boxes = [set() for _ in range(9)]
+        empty = []
+        
+        for i in range(9):
+            for j in range(9):
+                if board[i][j] != '.':
+                    num = int(board[i][j])
+                    rows[i].add(num)
+                    cols[j].add(num)
+                    boxes[(i // 3) * 3 + j // 3].add(num)
+                else:
+                    empty.append((i, j))
+        
+        def solve(idx):
+            if idx == len(empty):
+                return True
+            i, j = empty[idx]
+            box_idx = (i // 3) * 3 + j // 3
+            for num in range(1, 10):
+                if num not in rows[i] and num not in cols[j] and num not in boxes[box_idx]:
+                    board[i][j] = str(num)
+                    rows[i].add(num)
+                    cols[j].add(num)
+                    boxes[box_idx].add(num)
+                    
+                    if solve(idx + 1):
+                        return True
+                    
+                    board[i][j] = '.'
+                    rows[i].remove(num)
+                    cols[j].remove(num)
+                    boxes[box_idx].remove(num)
+            return False
+        
+        solve(0)
